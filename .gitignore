@@ -1,0 +1,5 @@
+tools/
+build/
+dist/
+vendor/
+__pycache__/
