@@ -45,24 +45,6 @@ The wardrobe captures gameplay mouse/keyboard input for its entire open duration
 - Restore is a session operation. After quitting and reloading, the newly saved appearance becomes the session's starting appearance. Uninstalling the mod does not revert saved appearances.
 - Do not unload the ASI while the game is running. Device reset and swap-chain resize are supported; full graphics-device replacement may require restarting the game.
 
-## Verification status
-
-**Experimental build.** The user opened the original menu in Titan Quest and selected Tyr; the reported missing HUD was traced to the original F8 shortcut. The mouse interface and native input capture still need live in-game verification.
-
-Completed checks:
-
-- Inspected exported getter, setter, main-player lookup, and update function in the installed game binary; verified the x86 MSVC string layout and calling convention.
-- Compiled the x86 ASI with statically linked C++ runtime.
-- Passed tests for string inline/heap boundaries, invalid paths, and all 217 imported paths.
-- Passed three CT parser tests, including ignoring scripts and deduplicating paths.
-- Rendered the actual menu through hooked DX9 EndScene and DX11 Present in standalone test programs, with framebuffer readback and visual inspection.
-- Exercised DX9 Reset and DX11 ResizeBuffers in those programs.
-- Passed simulated mouse tests for title-bar dragging, corner resizing, and independently expanding/collapsing all three lists.
-- Passed alphabetical grouping and case-insensitive catalogue search tests across all 217 choices.
-- Passed input-capture tests for closing-button holds, release draining, and restoring both previously enabled and disabled input states (including exception cleanup).
-
-Still needs an in-game check: Home opening, selecting/applying a texture, visible refresh, restore, switching characters, and save/reload behavior. Start with a normal PC texture matching the character's mesh. Renderer smoke tests do not prove the game integration works.
-
 ## Troubleshooting / uninstall
 
 The mod appends diagnostics beside itself as `TQSkinMenu.asi.log`. If Home does nothing, look for `Initialized for verified Game.dll` and a DirectX overlay initialization message. `Unsupported Game.dll` means this package intentionally did not activate. No log usually means the ASI loader did not load the plugin or the folder was not writable.
