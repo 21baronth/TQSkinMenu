@@ -24,6 +24,10 @@ if ($LASTEXITCODE) { throw 'String ABI tests failed' }
 if ($LASTEXITCODE) { throw 'Input test compilation failed' }
 & "$out\input_tests.exe"
 if ($LASTEXITCODE) { throw 'Input capture tests failed' }
+& $Compiler @common "$PSScriptRoot\tests\menu_options_tests.cpp" '-o' "$out\menu_options_tests.exe"
+if ($LASTEXITCODE) { throw 'Menu organization test compilation failed' }
+& "$out\menu_options_tests.exe"
+if ($LASTEXITCODE) { throw 'Menu organization tests failed' }
 Get-FileHash "$out\TQSkinMenu.asi" -Algorithm SHA256
 if ($GraphicsTests) {
 	& $Compiler @common '-DTQ_SKIN_PREVIEW' "$PSScriptRoot\tests\graphics_smoke.cpp" @sources @objects '-ld3d9' '-ld3d11' '-ldxgi' '-ld3dcompiler' '-ladvapi32' '-luser32' '-lgdi32' '-ldwmapi' '-o' "$out\graphics_smoke.exe"

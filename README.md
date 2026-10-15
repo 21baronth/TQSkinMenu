@@ -18,13 +18,14 @@ The supplied `winmm.dll` is the **32-bit Ultimate ASI Loader**, downloaded from 
 | Home | Open / close wardrobe |
 | Title bar | Drag to move; double-click to collapse the whole window |
 | Window corner / border | Drag to resize |
-| Male / Female / Extra headers | Expand or collapse each texture list |
+| Search field | Filter by skin name or texture path |
+| Male / Female / Extra headers | Expand or collapse each alphabetized texture list; counts show the current matches |
 | Texture row | Select a texture |
 | Apply skin button | Apply selected texture |
 | Restore starting appearance button | Restore the appearance captured when this character loaded |
 | X in the title bar | Close wardrobe |
 
-Lists start collapsed and scroll inside the window. Position, size, and expanded lists are remembered during the session. Male/Female use the texture's PC resource folder; NPC textures (including Tyr) and other paths are under Extra. Tab no longer changes categories.
+Lists start collapsed and scroll inside the window. Search opens the matching groups and filters names and paths case-insensitively; clear the search to return to the full catalogue. The groups show match counts and sort skins alphabetically by display name. The footer keeps the selected skin and its resource path visible while browsing. Position, size, and expanded lists are remembered during the session. Male/Female use the texture's PC resource folder; NPC textures (including Tyr) and other paths are under Extra. Tab no longer changes categories.
 
 The wardrobe captures gameplay mouse/keyboard input for its entire open duration. Windows events still reach ImGui, while Titan Quest's native input dispatcher runs with its input-disabled flag temporarily set. Device events continue to drain, and gameplay input resumes after the closing click/key is released. The original disable state is restored after each input pass, preserving cutscene/game-system restrictions. The world is **not paused**; use the wardrobe somewhere safe. F8 is left to Titan Quest's native HUD toggle.
 
@@ -51,6 +52,7 @@ Completed checks:
 - Rendered the actual menu through hooked DX9 EndScene and DX11 Present in standalone test programs, with framebuffer readback and visual inspection.
 - Exercised DX9 Reset and DX11 ResizeBuffers in those programs.
 - Passed simulated mouse tests for title-bar dragging, corner resizing, and independently expanding/collapsing all three lists.
+- Passed alphabetical grouping and case-insensitive catalogue search tests across all 217 choices.
 - Passed input-capture tests for closing-button holds, release draining, and restoring both previously enabled and disabled input states (including exception cleanup).
 
 Still needs an in-game check: Home opening, selecting/applying a texture, visible refresh, restore, switching characters, and save/reload behavior. Start with a normal PC texture matching the character's mesh. Renderer smoke tests do not prove the game integration works.

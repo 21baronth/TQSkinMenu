@@ -11,6 +11,7 @@
 #include <cctype>
 #include <atomic>
 #include "skin_category.h"
+#include "menu_options.h"
 
 namespace {
 HMODULE module;
@@ -47,11 +48,7 @@ bool Pressed(int key) {
 }
 
 const std::array<std::vector<int>, 3>& Groups() {
-	static const auto groups = [] {
-		std::array<std::vector<int>, 3> result;
-		for (int i = 0; i < static_cast<int>(std::size(kSkins)); ++i) result[SkinCategory(kSkins[i].path)].push_back(i);
-		return result;
-	}();
+	static const auto groups = BuildSkinGroups();
 	return groups;
 }
 
@@ -179,6 +176,8 @@ bool IsMenuVisible() {
 }
 
 void DrawMenu(float width, float height) {
+	static char filter[128]{};
+	static std::string previousFilter;
 	std::lock_guard<std::mutex> lock(stateMutex);
 	if (!visible) return;
 	ImGui::SetNextWindowPos(ImVec2(24, 24), ImGuiCond_FirstUseEver);
@@ -195,11 +194,23 @@ void DrawMenu(float width, float height) {
 		ImGui::TextWrapped("%s", status.c_str());
 		ImGui::TextWrapped("Current: %s", current.empty() ? "No loaded character" : current.c_str());
 		ImGui::Separator();
-		ImGui::BeginChild("Skin lists", ImVec2(0, -100), ImGuiChildFlags_Borders);
+		ImGui::Text("Skin catalogue  |  %d choices", static_cast<int>(std::size(kSkins)));
+		ImGui::SetNextItemWidth(-1);
+		ImGui::InputTextWithHint("##skin-search", "Search names or texture paths...", filter, sizeof(filter));
+		const bool filterChanged = previousFilter != filter;
+		if (filterChanged) previousFilter = filter;
+		const bool searching = filter[0] != '\0';
+		ImGui::BeginChild("Skin lists", ImVec2(0, -158), ImGuiChildFlags_Borders);
 		const auto& groups = Groups();
+		int totalMatches = 0;
 		for (int group = 0; group < 3; ++group) {
-			ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-			bool expandedGroup = ImGui::CollapsingHeader(categories[group]);
+			int matches = 0;
+			for (int index : groups[group]) if (SkinMatchesSearch(kSkins[index], filter)) ++matches;
+			totalMatches += matches;
+			if (filterChanged) ImGui::SetNextItemOpen(searching, ImGuiCond_Always);
+			std::string groupTitle = categories[group];
+			groupTitle += " (" + std::to_string(matches) + ")###skin-group-" + std::to_string(group);
+			bool expandedGroup = ImGui::CollapsingHeader(groupTitle.c_str());
 #ifdef TQ_SKIN_PREVIEW
 			const auto low = ImGui::GetItemRectMin(), high = ImGui::GetItemRectMax();
 			groupRects[group] = ImVec4(low.x, low.y, high.x, high.y);
@@ -207,6 +218,7 @@ void DrawMenu(float width, float height) {
 #endif
 			if (expandedGroup) {
 				for (int index : groups[group]) {
+					if (!SkinMatchesSearch(kSkins[index], filter)) continue;
 					ImGui::PushID(index);
 					if (ImGui::Selectable(kSkins[index].label, index == selection)) selection = index;
 					ImGui::PopID();
@@ -214,9 +226,11 @@ void DrawMenu(float width, float height) {
 			}
 		}
 		ImGui::EndChild();
-		ImGui::TextWrapped("Selected: %s", kSkins[selection].path);
+		ImGui::Text("%d matching choice%s", totalMatches, totalMatches == 1 ? "" : "s");
+		ImGui::Text("Selected: %s", kSkins[selection].label);
+		ImGui::TextWrapped("%s", kSkins[selection].path);
 		ImGui::BeginDisabled(!ready);
-		if (ImGui::Button("Apply skin")) requestedSkin = selection;
+		if (ImGui::Button("Apply selected skin", ImVec2(170, 0))) requestedSkin = selection;
 		ImGui::SameLine();
 		if (ImGui::Button("Restore starting appearance")) requestedRestore = true;
 		ImGui::EndDisabled();
