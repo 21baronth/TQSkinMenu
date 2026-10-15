@@ -2,6 +2,8 @@
 
 A draggable, resizable in-game wardrobe, containing 217 unique texture choices imported from `characterCreationKit6.CT`. Cheat Engine is not required. Only the **Player Texture** dropdown was imported; no CT scripts, attributes, currency, or other cheats are executed.
 
+> **Development disclosure — built with OpenAI Codex.** This mod was developed with substantial assistance from Codex, OpenAI's AI coding agent. Codex contributed to research, implementation, UI work, automated tests, packaging, and release documentation. The human maintainer supplied the goals and source table, directed the work, and chose what to publish. The build remains experimental and still needs the live in-game checks listed below.
+
 ## Credits and source attribution
 
 The texture catalogue is derived from **Character Creation Kit v6** by **Endymion**. This project imports only the texture names and paths from its Player Texture dropdown; it does not include the CT file or execute its scripts. See the original [Titan Quest Fans thread](https://titanquestfans.net/index.php?topic=1877.0) and [Nexus Mods page](https://www.nexusmods.com/titanquestanniversaryedition/mods/88). The Nexus permission notes allow modified releases provided Endymion is credited as the original creator.
