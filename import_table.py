@@ -38,7 +38,15 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	skins = extract(args.table)
 	args.output.parent.mkdir(parents=True, exist_ok=True)
-	lines = ['// Imported texture data only. No CT scripts are executed.', '#pragma once', 'struct Skin { const char* label; const char* path; };', 'inline constexpr Skin kSkins[] = {']
+	lines = [
+		'// Texture names and paths derived from Character Creation Kit v6 by Endymion.',
+		'// Source: https://titanquestfans.net/index.php?topic=1877.0',
+		'// Nexus Mods: https://www.nexusmods.com/titanquestanniversaryedition/mods/88',
+		'// Imported texture data only. No CT scripts are executed.',
+		'#pragma once',
+		'struct Skin { const char* label; const char* path; };',
+		'inline constexpr Skin kSkins[] = {'
+	]
 	lines += ['\t{' + json.dumps(s['label']) + ', ' + json.dumps(s['path']) + '},' for s in skins]
 	lines += ['};', '']
 	args.output.write_text('\n'.join(lines), encoding='utf-8')

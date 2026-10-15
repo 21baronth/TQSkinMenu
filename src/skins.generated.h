@@ -1,3 +1,6 @@
+// Texture names and paths derived from Character Creation Kit v6 by Endymion.
+// Source: https://titanquestfans.net/index.php?topic=1877.0
+// Nexus Mods: https://www.nexusmods.com/titanquestanniversaryedition/mods/88
 // Imported texture data only. No CT scripts are executed.
 #pragma once
 struct Skin { const char* label; const char* path; };
