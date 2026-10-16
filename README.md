@@ -4,13 +4,17 @@ A draggable, resizable in-game wardrobe, containing 217 unique texture choices i
 
 > **Development disclosure — built with OpenAI Codex.** This mod was developed with substantial assistance from Codex, OpenAI's AI coding agent. Codex contributed to research, implementation, UI work, automated tests, packaging, and release documentation. The human maintainer supplied the goals and source table, directed the work, and chose what to publish. The build remains experimental and still needs the live in-game checks listed below.
 
+## Important save warning
+
+> **Back up your saves before using this mod. Treat a backup as mandatory.** The mod is experimental, and bugs may corrupt a character save or leave a character unusable. Close the game before copying the entire Titan Quest save folder, and keep the backup somewhere separate from the active saves. The in-game restore button is not a save backup.
+
 ## Credits and source attribution
 
 The texture catalogue is derived from **Character Creation Kit v6** by **Endymion**. This project imports only the texture names and paths from its Player Texture dropdown; it does not include the CT file or execute its scripts. See the original [Titan Quest Fans thread](https://titanquestfans.net/index.php?topic=1877.0) and [Nexus Mods page](https://www.nexusmods.com/titanquestanniversaryedition/mods/88). The Nexus permission notes allow modified releases provided Endymion is credited as the original creator.
 
 ## Install
 
-1. Close Titan Quest. Back up the character save you intend to test: appearance changes can be saved by the game.
+1. Close Titan Quest and make a separate backup of the entire save folder before installing or using the mod. Appearance and model changes may be saved by the game, and a bug could leave a character unusable.
 2. Extract the packaged `TQSkinMenu.zip`. Copy **TQSkinMenu.asi** and **winmm.dll** from its `TQSkinMenu` folder beside **TQ.exe**. For the installation inspected here, this is `D:\SteamLibrary\steamapps\common\Titan Quest Anniversary Edition`.
 3. If that folder already contains `winmm.dll`, keep the existing file. If it is already an ASI loader, add only `TQSkinMenu.asi`; otherwise resolve the loader conflict before installing. Do not overwrite another mod's proxy DLL.
 4. Start the game normally, load a character, and press **Home**.
@@ -25,10 +29,11 @@ The supplied `winmm.dll` is the **32-bit Ultimate ASI Loader**, downloaded from 
 | Title bar | Drag to move; double-click to collapse the whole window |
 | Window corner / border | Drag to resize |
 | Search field | Filter by skin name or texture path |
-| Male / Female / Extra headers | Expand or collapse each alphabetized texture list; counts show the current matches |
+| Skin sections | Expand region lists, then Female / Male lists; Bonus has nested guard groups and match counts |
 | Texture row | Select a texture |
+| Change to female / male button | Switch the character model and rebuild equipped armor for that gender |
 | Apply skin button | Apply selected texture |
-| Restore starting appearance button | Restore the appearance captured when this character loaded |
+| Restore starting appearance button | Restore the gender and texture captured when this character loaded |
 | X in the title bar | Close wardrobe |
 
 ## Compatibility and limits
@@ -36,7 +41,8 @@ The supplied `winmm.dll` is the **32-bit Ultimate ASI Loader**, downloaded from 
 - Targets the installed **32-bit AE 2.10.21415 Game.dll** inspected on 2026-10-15 (Steam installation reported build 19471007). DirectX 9 and DirectX 11 overlay backends are included.
 - Exact supported Game.dll SHA-256: `754907EACF552656945FF9EAF1763630E138506517E91B698AB28A0C3186AA86`.
 - An unknown or modified Game.dll is rejected **before hooks are enabled**. Supporting another build requires checking its ABI and updating the compatibility profile, not disabling the check.
-- These are texture swaps, not body/mesh/gender replacements. A female or NPC texture on a male player mesh can look incorrect. The table includes expansion textures; resource availability and visual fit have not been checked for every entry.
+- The CT contributes texture choices only; it has no gender switch. The in-game gender control is a separate experimental feature using the game's actor mesh and paper-doll functions plus the verified character gender field. It supports only the inspected build and has not yet been confirmed in a live session. Armor fit, animations, cutscenes, multiplayer behavior, and save/reload persistence still need in-game verification.
+- PC texture paths are translated between male and female equivalents when switching models. NPC and other non-PC textures use the corresponding default white PC tunic until another texture is chosen. The table includes expansion textures; resource availability and visual fit have not been checked for every entry.
 - The game setter also derives the corresponding bump texture name and marks the appearance dirty. The menu uses this function so the game owns its string allocation and refresh behavior.
 - Restore is a session operation. After quitting and reloading, the newly saved appearance becomes the session's starting appearance. Uninstalling the mod does not revert saved appearances.
 - Do not unload the ASI while the game is running. Device reset and swap-chain resize are supported; full graphics-device replacement may require restarting the game.

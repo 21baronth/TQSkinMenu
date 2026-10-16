@@ -1,0 +1,246 @@
+--	GREEK	------------------
+	[+] Female
+		Greek F Black
+		Greek F Brown
+		Greek F Burgundy
+		Greek F Crimson
+		Greek F Gold
+		Greek F Gray
+		Greek F Hunter
+		Greek F LightBlue
+		Greek F Olive
+		Greek F Orange
+		Greek F Purple
+		Greek F Rose
+		Greek F RoyalBlue
+		Greek F Slate
+		Greek F Tan
+		Greek F White
+	[+] Male
+		Greek M Black
+		Greek M Brown
+		Greek M Burgundy
+		Greek M Crimson
+		Greek M Gold
+		Greek M Gray
+		Greek M Hunter
+		Greek M LightBlue
+		Greek M Olive
+		Greek M Orange
+		Greek M Purple
+		Greek M Rose
+		Greek M RoyalBlue
+		Greek M Slate
+		Greek M Tan
+		Greek M White
+
+--	EGYPT	------------------
+	[+] Female
+		Egyptian F Black
+		Egyptian F Brown
+		Egyptian F Burgundy
+		Egyptian F Crimson
+		Egyptian F Gold
+		Egyptian F Gray
+		Egyptian F Hunter
+		Egyptian F LightBlue
+		Egyptian F Olive
+		Egyptian F Orange
+		Egyptian F Purple
+		Egyptian F Rose
+		Egyptian F RoyalBlue
+		Egyptian F Slate
+		Egyptian F Tan
+		Egyptian F White
+	[+] Male
+		Egyptian M Black
+		Egyptian M Brown
+		Egyptian M Burgundy
+		Egyptian M Crimson
+		Egyptian M Gold
+		Egyptian M Gray
+		Egyptian M Hunter
+		Egyptian M LightBlue
+		Egyptian M Olive
+		Egyptian M Orange
+		Egyptian M Purple
+		Egyptian M Rose
+		Egyptian M RoyalBlue
+		Egyptian M Slate
+		Egyptian M Tan
+		Egyptian M White
+
+--	ASIAN	------------------
+	[+] Female
+		Asian F Black
+		Asian F Brown
+		Asian F Burgundy
+		Asian F Crimson
+		Asian F Gold
+		Asian F Gray
+		Asian F Hunter
+		Asian F LightBlue
+		Asian F Olive
+		Asian F Orange
+		Asian F Purple
+		Asian F Rose
+		Asian F RoyalBlue
+		Asian F Slate
+		Asian F Tan
+		Asian F White
+	[+] Male
+		Asian M Black
+		Asian M Brown
+		Asian M Burgundy
+		Asian M Crimson
+		Asian M Gold
+		Asian M Gray
+		Asian M Hunter
+		Asian M LightBlue
+		Asian M Olive
+		Asian M Orange
+		Asian M Purple
+		Asian M Rose
+		Asian M RoyalBlue
+		Asian M Slate
+		Asian M Tan
+		Asian M White
+
+--	LOINCLOTH	------------------
+	[+] Female
+		Loincloth F Black
+		Loincloth F Brown
+		Loincloth F Burgundy
+		Loincloth F Crimson
+		Loincloth F Gold
+		Loincloth F Gray
+		Loincloth F Hunter
+		Loincloth F LightBlue
+		Loincloth F Olive
+		Loincloth F Orange
+		Loincloth F Purple
+		Loincloth F Rose
+		Loincloth F RoyalBlue
+		Loincloth F Slate
+		Loincloth F Tan
+		Loincloth F White
+	[+] Male
+		Loincloth M Black
+		Loincloth M Brown
+		Loincloth M Burgundy
+		Loincloth M Crimson
+		Loincloth M Gold
+		Loincloth M Gray
+		Loincloth M Hunter
+		Loincloth M LightBlue
+		Loincloth M Olive
+		Loincloth M Orange
+		Loincloth M Purple
+		Loincloth M Rose
+		Loincloth M RoyalBlue
+		Loincloth M Slate
+		Loincloth M Tan
+		Loincloth M White
+
+--	CHTHON	------------------
+	[+] Female
+		Chthonic F Black
+		Chthonic F Brown
+		Chthonic F Burgundy
+		Chthonic F Crimson
+		Chthonic F Gold
+		Chthonic F Gray
+		Chthonic F Hunter
+		Chthonic F LightBlue
+		Chthonic F Olive
+		Chthonic F Orange
+		Chthonic F Purple
+		Chthonic F Rose
+		Chthonic F RoyalBlue
+		Chthonic F Slate
+		Chthonic F Tan
+		Chthonic F White
+	[+] Male
+		Chthonic M Black
+		Chthonic M Brown
+		Chthonic M Burgundy
+		Chthonic M Crimson
+		Chthonic M Gold
+		Chthonic M Gray
+		Chthonic M Hunter
+		Chthonic M LightBlue
+		Chthonic M Olive
+		Chthonic M Orange
+		Chthonic M Purple
+		Chthonic M Rose
+		Chthonic M RoyalBlue
+		Chthonic M Slate
+		Chthonic M Tan
+		Chthonic M White
+
+--	NORTHERN	------------------
+	[+] Female
+		Northern F Black
+		Northern F Brown
+		Northern F Burgundy
+		Northern F Crimson
+		Northern F Gold
+		Northern F Gray
+		Northern F Hunter
+		Northern F LightBlue
+		Northern F Olive
+		Northern F Orange
+		Northern F Purple
+		Northern F Rose
+		Northern F RoyalBlue
+		Northern F Slate
+		Northern F Tan
+		Northern F White
+	[+] Male
+		Northern M Black
+		Northern M Brown
+		Northern M Burgundy
+		Northern M Crimson
+		Northern M Gold
+		Northern M Gray
+		Northern M Hunter
+		Northern M LightBlue
+		Northern M Olive
+		Northern M Orange
+		Northern M Purple
+		Northern M Rose
+		Northern M RoyalBlue
+		Northern M Slate
+		Northern M Tan
+		Northern M White
+
+--	BONUS	------------------
+	[+] Female
+		Alala F
+		Assassin F
+		Prometheus Order F
+		Ylva F
+	[+] Male
+		Andhrimnir M
+		Assassin M
+		Athens M
+		Babylonian Guard M
+		[+] Egyptian Guard
+			Egyptian GuardA M
+			Egyptian GuardB M
+			Egyptian GuardC M
+			Egyptian GuardD M
+		Gadir M
+		Greek Guard M
+		Helos M
+		King Gilfy M
+		[+] Chinese Guard
+			M Chinese GuardA M
+			M Chinese GuardB M
+			M Chinese GuardC M
+		M Nerthus Cult M
+		Megara M
+		Prometheus Order M
+		Rhodes M
+		Thor M
+		Tyr M

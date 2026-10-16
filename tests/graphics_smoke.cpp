@@ -30,7 +30,7 @@ int TestInteraction() {
 		ImGui::NewFrame(); DrawMenu(960, 720); ImGui::Render();
 	};
 	frame(-100, -100, false); frame(-100, -100, false);
-	for (int group = 0; group < 3; ++group) {
+	for (int group = 0; group < 7; ++group) {
 		assert(!PreviewGroupOpen(group));
 		auto box = PreviewGroupRect(group);
 		for (int toggle = 0; toggle < 2; ++toggle) {
@@ -56,7 +56,7 @@ int TestInteraction() {
 	frame(cornerX - 80, cornerY - 60, false);
 	assert(window->Size.x < oldSize.x - 40 && window->Size.y < oldSize.y - 30);
 	ImGui::DestroyContext();
-	puts("Passed mouse dragging, resizing, and all three collapsible groups.");
+	puts("Passed mouse dragging, resizing, and all seven collapsible skin sections.");
 	return 0;
 }
 
