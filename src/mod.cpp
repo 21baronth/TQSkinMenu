@@ -12,7 +12,6 @@
 #include <atomic>
 #include "skin_category.h"
 #include "menu_options.h"
-#include "player_model.h"
 
 namespace {
 HMODULE module;
@@ -21,9 +20,6 @@ std::atomic_bool visible{false};
 bool ready = false;
 int selection = 0;
 int requestedSkin = -1;
-int requestedGender = -1;
-uint32_t currentGender = 2;
-uint32_t originalGender = 2;
 #ifdef TQ_SKIN_PREVIEW
 ImVec4 groupRects[7];
 bool groupOpen[7]{};
@@ -37,16 +33,10 @@ std::array<bool, 256> keys{};
 using GetPlayer = void* (__thiscall*)(void*);
 using GetTexture = const GameString* (__thiscall*)(void*);
 using SetTexture = void (__thiscall*)(void*, GameString*);
-using GetGender = uint32_t (__thiscall*)(void*);
-using SetMesh = void (__thiscall*)(void*, const char*, bool);
-using CreatePaperDoll = void (__thiscall*)(void*, bool);
 using Update = void (__thiscall*)(void*, int);
 GetPlayer getPlayer;
 GetTexture getTexture;
 SetTexture setTexture;
-GetGender getGender;
-SetMesh setMesh;
-CreatePaperDoll createPaperDoll;
 Update originalUpdate;
 
 bool Pressed(int key) {
@@ -112,39 +102,6 @@ void Apply(void* player, const std::string& path) {
 	} else status = "The game did not retain the requested texture.";
 }
 
-bool ChangeGender(void* player, uint32_t targetGender, const std::string& priorTexture) {
-	const char* mesh = PlayerModelPath(targetGender);
-	if (!mesh || !player || !getGender || !setMesh || !createPaperDoll) return false;
-	const uint32_t currentGender = getGender(player);
-	if (currentGender > kFemaleGender) {
-		std::lock_guard<std::mutex> lock(stateMutex);
-		status = "The game returned an unknown player model. No change was made.";
-		return false;
-	}
-	if (currentGender == targetGender) {
-		std::lock_guard<std::mutex> lock(stateMutex);
-		status = targetGender == kFemaleGender ? "Female model is already active." : "Male model is already active.";
-		return true;
-	}
-	// Character::GetGender reads this enum from the verified 2.10.21415 layout.
-	// The supported Game.dll hash is checked before this profile can be used.
-	*reinterpret_cast<uint32_t*>(static_cast<unsigned char*>(player) + kCharacterGenderOffset) = targetGender;
-	setMesh(player, mesh, true);
-	createPaperDoll(player, true);
-	std::string matchingTexture = TextureForGender(priorTexture, targetGender);
-	if (matchingTexture.empty()) matchingTexture = targetGender == kFemaleGender
-		? "Creatures\\PC\\Female\\FemalePC01_White.tex"
-		: "Creatures\\PC\\Male\\MalePC01_White.tex";
-	Apply(player, matchingTexture);
-	{
-		std::lock_guard<std::mutex> lock(stateMutex);
-		status = targetGender == kFemaleGender
-			? "Female model applied. Check armor and save behavior in game."
-			: "Male model applied. Check armor and save behavior in game.";
-	}
-	return true;
-}
-
 void __fastcall UpdateHook(void* engine, void*, int elapsed) {
 	originalUpdate(engine, elapsed);
 	std::unique_lock<std::mutex> lock(stateMutex);
@@ -154,44 +111,32 @@ void __fastcall UpdateHook(void* engine, void*, int elapsed) {
 	bool toggle = Pressed(VK_HOME);
 	if (focused && toggle) visible = !visible;
 	void* player = getPlayer(engine);
-	currentGender = player ? getGender(player) : 2;
 	if (player != lastPlayer) {
 		lastPlayer = player;
 		requestedSkin = -1;
-		requestedGender = -1;
 		requestedRestore = false;
 		original.clear();
 		current.clear();
-		originalGender = 2;
 		ready = player && ReadTexture(player, current);
-		if (ready) { original = current; originalGender = currentGender; }
+		if (ready) original = current;
 		status = ready ? "Choose a skin, then click Apply skin." : "Load a character to change skins.";
 	}
 	if (!player) { ready = false; return; }
 	if (!ready && ReadTexture(player, current)) {
 		ready = true;
 		original = current;
-		originalGender = currentGender;
 		status = "Choose a skin, then click Apply skin.";
 	}
 	// UI requests are consumed only here, never inside the renderer or WndProc.
 	int request = requestedSkin;
 	bool restore = requestedRestore;
-	int genderRequest = restore ? (originalGender <= kFemaleGender ? static_cast<int>(originalGender) : -1) : requestedGender;
 	requestedSkin = -1;
-	requestedGender = -1;
 	requestedRestore = false;
 	if (!focused || !ready) return;
 	std::string path;
 	if (restore && !original.empty()) path = original;
 	else if (request >= 0 && request < static_cast<int>(std::size(kSkins))) path = kSkins[request].path;
-	if (genderRequest >= 0 && !path.empty()) {
-		std::string matchingTexture = TextureForGender(path, static_cast<uint32_t>(genderRequest));
-		if (!matchingTexture.empty()) path = matchingTexture;
-	}
-	const std::string priorTexture = current;
 	lock.unlock();
-	if (genderRequest >= 0 && genderRequest <= static_cast<int>(kFemaleGender)) ChangeGender(player, static_cast<uint32_t>(genderRequest), priorTexture);
 	// Never hold the menu lock while game code loads textures or refreshes rendering.
 	if (!path.empty()) Apply(player, path);
 }
@@ -221,20 +166,6 @@ bool KnownGame(HMODULE game) {
 	return ok;
 }
 
-bool KnownModelEngine(HMODULE engine, void* meshSetter) {
-	if (!engine) return false;
-	auto* base = reinterpret_cast<unsigned char*>(engine);
-	auto* dos = reinterpret_cast<IMAGE_DOS_HEADER*>(base);
-	if (dos->e_magic != IMAGE_DOS_SIGNATURE) return false;
-	auto* pe = reinterpret_cast<IMAGE_NT_HEADERS*>(base + dos->e_lfanew);
-	const unsigned char signature[] = {0x55,0x8b,0xec,0x83,0xe4,0xf8,0x51,0x56};
-	return pe->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 &&
-		pe->FileHeader.TimeDateStamp == 0x62da9ca0 &&
-		pe->OptionalHeader.SizeOfImage == 0x44c000 &&
-		reinterpret_cast<unsigned char*>(meshSetter) == base + 0x113890 &&
-		memcmp(meshSetter, signature, sizeof(signature)) == 0;
-}
-
 DWORD WINAPI Initialize(void*) {
 	HMODULE game = nullptr;
 	for (int i = 0; i < 120 && !game; ++i) { game = GetModuleHandleW(L"Game.dll"); if (!game) Sleep(500); }
@@ -242,13 +173,8 @@ DWORD WINAPI Initialize(void*) {
 	getPlayer = reinterpret_cast<GetPlayer>(GetProcAddress(game, "?GetMainPlayer@GameEngine@GAME@@QBEPAVPlayer@2@XZ"));
 	getTexture = reinterpret_cast<GetTexture>(GetProcAddress(game, "?GetPlayerTexture@Player@GAME@@QAEABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ"));
 	setTexture = reinterpret_cast<SetTexture>(GetProcAddress(game, "?SetPlayerTexture@Player@GAME@@QAEXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z"));
-	getGender = reinterpret_cast<GetGender>(GetProcAddress(game, "?GetGender@Character@GAME@@UBE?AW4Character_Gender@2@XZ"));
-	HMODULE engine = GetModuleHandleW(L"Engine.dll");
-	setMesh = engine ? reinterpret_cast<SetMesh>(GetProcAddress(engine, "?SetMesh@Actor@GAME@@QAEXPBD_N@Z")) : nullptr;
-	createPaperDoll = reinterpret_cast<CreatePaperDoll>(GetProcAddress(game, "?CreatePaperDoll@Player@GAME@@QAEX_N@Z"));
 	void* update = reinterpret_cast<void*>(GetProcAddress(game, "?Update@GameEngine@GAME@@QAEXH@Z"));
-	if (!getPlayer || !getTexture || !setTexture || !getGender || !setMesh || !createPaperDoll || !update) { Log("Required game exports missing."); return 0; }
-	if (!KnownModelEngine(engine, reinterpret_cast<void*>(setMesh))) { Log("Unsupported Engine.dll model function. No hooks enabled."); return 0; }
+	if (!getPlayer || !getTexture || !setTexture || !update) { Log("Required game exports missing."); return 0; }
 	if (MH_Initialize() != MH_OK) { Log("MinHook initialization failed."); return 0; }
 	if (MH_CreateHook(update, reinterpret_cast<void*>(&UpdateHook), reinterpret_cast<void**>(&originalUpdate)) != MH_OK || !InstallInputHooks() || !InstallGraphicsHooks()) {
 		Log("Hook preparation failed. No hooks enabled."); MH_Uninitialize(); return 0;
@@ -293,14 +219,6 @@ void DrawMenu(float width, float height) {
 		ImGui::TextColored(ImVec4(1,0.76f,0.3f,1), "Gameplay input captured. The world keeps running.");
 		ImGui::Separator();
 		ImGui::TextWrapped("%s", status.c_str());
-		const uint32_t gender = currentGender;
-		ImGui::Text("Player model: %s", gender == kMaleGender ? "Male" : gender == kFemaleGender ? "Female" : "Unknown");
-		ImGui::SameLine();
-		ImGui::BeginDisabled(!ready || gender > kFemaleGender);
-		if (gender == kMaleGender && ImGui::Button("Experimental: female")) requestedGender = kFemaleGender;
-		else if (gender == kFemaleGender && ImGui::Button("Experimental: male")) requestedGender = kMaleGender;
-		ImGui::EndDisabled();
-		ImGui::TextColored(ImVec4(1,0.76f,0.3f,1), "Back up your character first; check armor and animations after switching.");
 		ImGui::TextWrapped("Current: %s", current.empty() ? "No loaded character" : current.c_str());
 		ImGui::Separator();
 		ImGui::Text("Skin catalogue  |  %d choices", static_cast<int>(std::size(kSkins)));
