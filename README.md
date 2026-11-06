@@ -26,14 +26,10 @@ The supplied `winmm.dll` is the **32-bit Ultimate ASI Loader**, downloaded from 
 | Control | Action |
 | --- | --- |
 | Home | Open / close wardrobe |
-| Title bar | Drag to move; double-click to collapse the whole window |
-| Window corner / border | Drag to resize |
 | Search field | Filter by skin name or texture path |
 | Skin sections | Expand region lists, then Female / Male lists; Bonus has nested guard groups and match counts |
-| Texture row | Select a texture |
 | Apply skin button | Apply selected texture |
 | Restore starting appearance button | Restore the texture captured when this character loaded |
-| X in the title bar | Close wardrobe |
 
 ## Compatibility and limits
 
